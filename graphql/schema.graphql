@@ -1,0 +1,41 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Query {
+    services: [Service]  @paginate
+    getCustomerByEmail(email: String @eq ): Customer @first
+    getCustomerByPhone(phone: String @eq ): Customer @first
+}
+
+type Mutation {
+    registerCustomer(customer: RegisterCustomerInput!): Customer
+}
+
+type  Service {
+    id: ID!
+    name: String!
+    duration: Int
+    price: Float
+}
+
+type Customer {
+    id: ID!
+    firstName: String! @rename(attribute: "first_name")
+    lastName: String! @rename(attribute: "last_name")
+    email: String!
+    phone: String!
+    preferredCommunicationMode: CommunicationOptions @rename(attribute: "preferred_communication_mode")
+}
+
+enum CommunicationOptions {
+    sms
+    whatsapp
+    email
+}
+
+input RegisterCustomerInput {
+    firstName: String! @rename(attribute: "first_name")
+    lastName: String! @rename(attribute: "last_name")
+    email: String! @rules(apply: ["email", "unique:customers,email"])
+    phone: String!
+    preferredCommunicationMode: String @rename(attribute: "preferred_communication_mode")
+}
